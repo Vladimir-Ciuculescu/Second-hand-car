@@ -1,9 +1,11 @@
-import { IsEmail } from 'class-validator';
-import { AfterInsert, AfterRemove, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IsEmail, IsNumber } from 'class-validator';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
+  @IsNumber()
   id: number;
 
   @Column()
@@ -13,13 +15,9 @@ export class User {
   @Column()
   password: string;
 
-  @AfterRemove()
-  logDeletion() {
-    console.log(this);
-  }
-
-  @AfterInsert()
-  logInsertion() {
-    console.log(this);
+  @BeforeInsert()
+  async hashPasssword() {
+    const hash = await bcrypt.hash(this.password, 10);
+    this.password = hash;
   }
 }
