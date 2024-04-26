@@ -66,6 +66,12 @@ export class UsersService {
     this.usersRepository.save(user);
   }
 
+  async getAllUsers() {
+    const users = await this.usersRepository.find();
+
+    return users;
+  }
+
   // async removeUser(id: number) {
   //   const user = await this.findUserById(id);
 

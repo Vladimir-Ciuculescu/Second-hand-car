@@ -14,6 +14,7 @@ import {
   Query,
   Res,
   Session,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -28,6 +29,7 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { User } from './user.entity';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
 
 @Controller('users')
@@ -54,7 +56,9 @@ export class UsersController {
   async addUser(@Body() body: CreateUserDto, @Session() session: any) {
     const user = await this.authService.register(body);
 
-    session.userId = user;
+    console.log(111, session);
+
+    //session.userId = user;
 
     return user;
   }
@@ -84,6 +88,14 @@ export class UsersController {
   @Get('/colors')
   getColor(@Session() session: any) {
     return session.color;
+  }
+
+  @Get('/all-users')
+  // @UseGuards(AuthGuard)
+  async getAllUsers() {
+    const allUsers = await this.usersService.getAllUsers();
+
+    return allUsers;
   }
 
   // @Serialize(UserDto)
